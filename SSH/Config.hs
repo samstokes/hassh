@@ -24,7 +24,7 @@ data Section =
 
 data HostOption =
     HostName String
-  | UnknownOption String
+  | UnknownOption { keyword :: String, rest :: String }
   deriving (Show)
 
 
@@ -49,8 +49,10 @@ hostHeaderP :: CharParser st String
 hostHeaderP = line $ string "Host" >> space >> many1 alphaNum
 
 hostOptionP :: CharParser st HostOption
-hostOptionP = HostName <$> (line $
-    string "HostName" >> space >> hostNameP)
+hostOptionP = line $ do
+    keyword <- many1 letter
+    case keyword of "HostName" -> HostName <$> (space *> hostNameP)
+                    _ -> UnknownOption keyword <$> many (noneOf "\n")
 
 hostNameP :: CharParser st String
 hostNameP = many1 $ satisfy $ not . isSpace
