@@ -49,10 +49,11 @@ hostHeaderP :: CharParser st String
 hostHeaderP = line $ string "Host" >> space >> hostNameP
 
 hostOptionP :: CharParser st HostOption
-hostOptionP = line $ do
+hostOptionP = line $ (do
     keyword <- many1 letter <* space
     case keyword of "HostName" -> HostName <$> hostNameP
                     _ -> UnknownOption keyword <$> many (noneOf "\n")
+    <?> "config option")
 
 hostNameP :: CharParser st String
 hostNameP = many1 $ satisfy $ not . isSpace
