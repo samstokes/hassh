@@ -46,7 +46,7 @@ hostSectionP = HostSection <$>
     hostHeaderP <*> many1 hostOptionP
 
 hostHeaderP :: CharParser st String
-hostHeaderP = line $ string "Host" >> space >> many1 alphaNum
+hostHeaderP = line $ string "Host" >> space >> hostNameP
 
 hostOptionP :: CharParser st HostOption
 hostOptionP = line $ do
