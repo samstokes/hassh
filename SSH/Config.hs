@@ -1,7 +1,7 @@
 module SSH.Config
-  ( Config
-  , Section
-  , HostOption
+  ( Config(..)
+  , Section(..)
+  , HostOption(..)
   , parser
   )
 where
