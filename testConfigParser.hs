@@ -1,10 +1,10 @@
 import SSH.Config
 import System
-import Text.ParserCombinators.Parsec (runParser, ParseError)
+import Text.ParserCombinators.Parsec (parse, ParseError)
 
 main = do
   stdin <- getContents
-  handleParse $ runParser parser () "<stdin>" stdin
+  handleParse $ parse parser "<stdin>" stdin
 
 handleParse :: Either ParseError Config -> IO ()
 handleParse (Left err) = print err >> exitFailure
