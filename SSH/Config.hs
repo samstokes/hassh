@@ -50,8 +50,8 @@ hostHeaderP = line $ string "Host" >> space >> many1 alphaNum
 
 hostOptionP :: CharParser st HostOption
 hostOptionP = line $ do
-    keyword <- many1 letter
-    case keyword of "HostName" -> HostName <$> (space *> hostNameP)
+    keyword <- many1 letter <* space
+    case keyword of "HostName" -> HostName <$> hostNameP
                     _ -> UnknownOption keyword <$> many (noneOf "\n")
 
 hostNameP :: CharParser st String
