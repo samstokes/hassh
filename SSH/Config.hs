@@ -9,7 +9,6 @@ import Char
 import Control.Applicative hiding(many)
 import Control.Monad (ap)
 import Text.ParserCombinators.Parsec hiding(space)
-import Text.ParserCombinators.Parsec.Language
 
 {- REPRESENTATION -}
 
@@ -36,6 +35,7 @@ instance Applicative (GenParser a st) where
   pure = return
 
 
+parser :: CharParser st Config
 parser = configP
 
 configP :: CharParser st Config
@@ -50,9 +50,9 @@ hostHeaderP = line $ string "Host" >> space >> hostNameP
 
 hostOptionP :: CharParser st HostOption
 hostOptionP = line $ (do
-    keyword <- many1 letter <* space
-    case keyword of "HostName" -> HostName <$> hostNameP
-                    _ -> UnknownOption keyword <$> many (noneOf "\n")
+    kw <- many1 letter <* space
+    case kw of "HostName" -> HostName <$> hostNameP
+               _ -> UnknownOption kw <$> many (noneOf "\n")
     <?> "config option")
 
 hostNameP :: CharParser st String

@@ -2,6 +2,7 @@ import SSH.Config
 import System
 import Text.ParserCombinators.Parsec (parse, ParseError)
 
+main :: IO ()
 main = do
   stdin <- getContents
   handleParse $ parse parser "<stdin>" stdin
