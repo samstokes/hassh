@@ -6,7 +6,7 @@ module SSH.Config
   )
 where
 import Char
-import Control.Applicative hiding(many)
+import Control.Applicative hiding(many, (<|>))
 import Control.Monad (ap)
 import Text.ParserCombinators.Parsec hiding(space)
 
@@ -39,7 +39,7 @@ parser :: CharParser st Config
 parser = configP
 
 configP :: CharParser st Config
-configP = Config <$> hostSectionP `swimmingIn` newline <* eof
+configP = Config <$> hostSectionP `swimmingIn` blankOrComment <* eof
 
 hostSectionP :: CharParser st Section
 hostSectionP = HostSection <$>
@@ -58,6 +58,13 @@ hostOptionP = line $ (do
 hostNameP :: CharParser st String
 hostNameP = many1 $ satisfy $ not . isSpace
 
+blankOrComment :: CharParser st String
+blankOrComment = comment <|> one newline
+
+comment :: CharParser st String
+comment = line $ (
+    char '#' *> spaces *> many (noneOf "\n") <?> "comment")
+
 -- override 'space' in Text.ParserCombinators.Parsec which matches any whitespace
 space :: CharParser st Char
 space = char ' '
@@ -67,3 +74,6 @@ line p = p <* newline
 
 swimmingIn :: GenParser tok st a -> GenParser tok st sep -> GenParser tok st [a]
 p `swimmingIn` separator = many separator *> p `sepEndBy` (many1 separator)
+
+one :: GenParser tok st a -> GenParser tok st [a]
+one p = do { item <- p; return [item] }
