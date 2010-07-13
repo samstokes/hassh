@@ -9,4 +9,7 @@ main = do
 
 handleParse :: Either ParseError Config -> IO ()
 handleParse (Left err) = print err >> exitFailure
-handleParse (Right config) = print config
+handleParse (Right config) = print $ oneCharNames (sections config)
+
+oneCharNames :: [Section] -> [Char]
+oneCharNames sects = [nm !! 0 | HostSection nm _ <- sects, length nm == 1]
