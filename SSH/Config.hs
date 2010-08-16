@@ -29,12 +29,6 @@ data HostOption =
 
 {- PARSER -}
 
--- nice Applicative goodness for Parsec
-instance Applicative (GenParser a st) where
-  (<*>) = ap
-  pure = return
-
-
 parser :: CharParser st Config
 parser = configP
 
