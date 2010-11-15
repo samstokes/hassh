@@ -16,7 +16,7 @@ data Config = Config { sections :: [Section] }
   deriving (Show)
 
 data Section =
-    HostSection { name :: String
+    HostSection { names :: [String]
                 , options :: [HostOption]
                 }
   deriving (Show)
@@ -45,8 +45,8 @@ hostSectionP :: CharParser st Section
 hostSectionP = HostSection <$>
     hostHeaderP <*> many1 hostOptionP
 
-hostHeaderP :: CharParser st String
-hostHeaderP = line $ string "Host" >> space >> hostNameP
+hostHeaderP :: CharParser st [String]
+hostHeaderP = line $ string "Host" >> many1 (space *> hostNameP)
 
 hostOptionP :: CharParser st HostOption
 hostOptionP = line $ (do

@@ -12,4 +12,4 @@ handleParse (Left err) = print err >> exitFailure
 handleParse (Right config) = print $ oneCharNames (sections config)
 
 oneCharNames :: [Section] -> [Char]
-oneCharNames sects = [nm !! 0 | HostSection nm _ <- sects, length nm == 1]
+oneCharNames sects = [nm !! 0 | HostSection nms _ <- sects, nm <- nms, length nm == 1]
