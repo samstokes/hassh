@@ -2,12 +2,14 @@ module SSH.Config
   ( Config(..)
   , Section(..)
   , HostOption(..)
+  , hostName
   , parser
   )
 where
 import Char
 import Control.Applicative hiding(many, (<|>))
 import Control.Monad (ap)
+import Data.List (find)
 import Text.ParserCombinators.Parsec hiding(space)
 
 {- REPRESENTATION -}
@@ -25,6 +27,15 @@ data HostOption =
     HostName String
   | UnknownOption { keyword :: String, rest :: String }
   deriving (Show)
+
+
+hostName :: Section -> Maybe String
+hostName section = do
+    (HostName name) <- find isHostnameOption (options section)
+    return name
+  where
+    isHostnameOption (HostName _) = True
+    isHostnameOption _ = False
 
 
 {- PARSER -}
