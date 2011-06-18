@@ -10,6 +10,7 @@ import Char
 import Control.Applicative hiding(many, (<|>))
 import Control.Monad (ap)
 import Data.List (find)
+import Data.Maybe
 import Text.ParserCombinators.Parsec hiding(space)
 
 {- REPRESENTATION -}
@@ -29,8 +30,8 @@ data HostOption =
   deriving (Show)
 
 
-hostName :: Section -> Maybe String
-hostName section = do
+hostName :: Section -> String
+hostName section = fromMaybe (head (names section)) $ do
     (HostName name) <- find isHostnameOption (options section)
     return name
   where
