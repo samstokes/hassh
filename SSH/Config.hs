@@ -2,6 +2,7 @@ module SSH.Config
   ( Config(..)
   , Section(..)
   , HostOption(..)
+  , alias
   , hostName
   , parser
   )
@@ -30,8 +31,11 @@ data HostOption =
   deriving (Show)
 
 
+alias :: Section -> String
+alias = head . names
+
 hostName :: Section -> String
-hostName section = fromMaybe (head (names section)) $ do
+hostName section = fromMaybe (alias section) $ do
     (HostName name) <- find isHostnameOption (options section)
     return name
   where
