@@ -25,22 +25,17 @@ data Section =
                 }
   deriving (Show)
 
-data HostOption =
-    HostName String
-  | UnknownOption { keyword :: String, rest :: String }
-  deriving (Show)
+type HostOption = (String, String)
+
+optionName :: HostOption -> String
+optionName = fst
 
 
 alias :: Section -> String
 alias = head . names
 
 hostName :: Section -> String
-hostName section = fromMaybe (alias section) $ do
-    (HostName name) <- find isHostnameOption (options section)
-    return name
-  where
-    isHostnameOption (HostName _) = True
-    isHostnameOption _ = False
+hostName section = fromMaybe (alias section) $ lookup "HostName" (options section)
 
 
 {- PARSER -}
@@ -61,8 +56,8 @@ hostHeaderP = line $ string "Host" >> many1 (space *> hostNameP)
 hostOptionP :: CharParser st HostOption
 hostOptionP = line $ (do
     kw <- many1 letter <* space
-    case kw of "HostName" -> HostName <$> hostNameP
-               _ -> UnknownOption kw <$> many (noneOf "\n")
+    case kw of "HostName" -> (,) "HostName" <$> hostNameP
+               _ -> (,) kw <$> many (noneOf "\n")
     <?> "config option")
 
 hostNameP :: CharParser st String
