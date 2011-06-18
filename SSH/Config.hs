@@ -4,6 +4,7 @@ module SSH.Config
   , HostOption(..)
   , alias
   , hostName
+  , nonIdentifyingOptions
   , label
   , user
   , port
@@ -39,6 +40,9 @@ alias = head . names
 
 hostName :: Section -> String
 hostName section = fromMaybe (alias section) $ lookup "HostName" (options section)
+
+nonIdentifyingOptions :: Section -> [HostOption]
+nonIdentifyingOptions = filter ((flip notElem) ["HostName", "Port"] . fst) . options
 
 label :: Section -> String
 label section = if friendly == detail
