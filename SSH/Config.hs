@@ -4,6 +4,9 @@ module SSH.Config
   , HostOption(..)
   , alias
   , hostName
+  , label
+  , user
+  , port
   , parser
   )
 where
@@ -12,7 +15,7 @@ import Control.Applicative hiding(many, (<|>))
 import Control.Monad (ap)
 import Data.List (find)
 import Data.Maybe
-import Text.ParserCombinators.Parsec hiding(space)
+import Text.ParserCombinators.Parsec hiding(space, label)
 
 {- REPRESENTATION -}
 
@@ -36,6 +39,22 @@ alias = head . names
 
 hostName :: Section -> String
 hostName section = fromMaybe (alias section) $ lookup "HostName" (options section)
+
+label :: Section -> String
+label section = if friendly == detail
+                then friendly
+                else friendly ++ " (" ++ detail ++ ")"
+  where
+    friendly = alias section
+    detail = userPart ++ hostName section ++ portPart
+    userPart = maybe "" (++ "@") $ user section
+    portPart = maybe "" (":" ++) $ port section
+
+user :: Section -> Maybe String
+user = lookup "User" . options
+
+port :: Section -> Maybe String
+port = lookup "Port" . options
 
 
 {- PARSER -}
