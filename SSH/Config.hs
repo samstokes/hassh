@@ -11,7 +11,7 @@ module SSH.Config
   , parser
   )
 where
-import Char
+import Data.Char (Char, isSpace)
 import Control.Applicative hiding(many, (<|>))
 import Control.Monad (ap)
 import Data.List (find)
